@@ -1,22 +1,23 @@
 xdelta3-python
 ==============
 
-|BuildStatus| |Coverage| |pypi|
+This is a fork of `xdelta3-python <https://github.com/samuelcolvin/xdelta3-python` changed
+to work with python2.7 and Windows (at least 10).
 
-Fast delta encoding in python using xdelta3.
+Fast delta encoding in python using xdelta 3.0.11.
 
 Requirements
 ------------
 
-* **Python 3.5 or 3.6** - it's 2017, you should be using python 3.6 by now anyway.
-* **linux** - compilation only tested on ubuntu, might work on other platform.
+* **Python 2.7**
+* **Windows 10** - might work on other windowses, did not test that anyway.
 
 Installation
 ------------
 
 .. code:: shell
 
-    pip install xdelta3
+	python Setup.py build 
 
 Usage
 -----
@@ -39,15 +40,9 @@ Usage
 How fast?
 ---------
 
-*xdelta3-python* is a thin wrapper around `xdelta 3.1.1 <https://github.com/jmacd/xdelta/>`_
+*xdelta3-python* is a thin wrapper around `xdelta 3.0.11 <https://github.com/jmacd/xdelta/>`_
 which is a highly optimised c library for delta calculation and compression.
 It can encode a delta and decode it again for 5 small changes in a 5.5 million character string
 (the complete works of shakespeare) in around 10ms (or 30ms with the highest compression level). Boom.
 See `performance.py <https://github.com/samuelcolvin/xdelta3-python/blob/master/performance.py>`_.
 
-.. |BuildStatus| image:: https://travis-ci.org/samuelcolvin/xdelta3-python.svg?branch=master
-   :target: https://travis-ci.org/samuelcolvin/xdelta3-python
-.. |Coverage| image:: https://codecov.io/gh/samuelcolvin/xdelta3-python/branch/master/graph/badge.svg
-   :target: https://codecov.io/gh/samuelcolvin/xdelta3-python
-.. |pypi| image:: https://img.shields.io/pypi/v/xdelta3.svg
-   :target: https://pypi.python.org/pypi/xdelta3
