@@ -1,10 +1,9 @@
+from __future__ import print_function
 import sys
 from enum import IntEnum
 
 import _xdelta3
 from _xdelta3 import NoDeltaFound, XDeltaError  # noqa
-
-from .version import VERSION
 
 __all__ = [
     'NoDeltaFound',
@@ -74,7 +73,7 @@ class Flags(IntEnum):
     COMPLEVEL_9 = 9 << COMPLEVEL_SHIFT
 
 
-def encode(original: bytes, new_value: bytes, flags: int=Flags.COMPLEVEL_9) -> bytes:
+def encode(original, new_value, flags=Flags.COMPLEVEL_9):
     """
     Encode a delta of new_value from original.
 
@@ -89,7 +88,7 @@ def encode(original: bytes, new_value: bytes, flags: int=Flags.COMPLEVEL_9) -> b
     return _xdelta3.execute(new_value, original, flags, 0)
 
 
-def decode(original: bytes, delta: bytes, flags: int=Flags.COMPLEVEL_9) -> bytes:
+def decode(original, delta, flags=Flags.COMPLEVEL_9):
     """
     Decode a delta to calculate a new value from the original and a delta.
 
@@ -108,6 +107,6 @@ def print_version():
     """
     Print version info for xdelta3-python and the xdelta3 c library.
     """
-    print('xdelta3-python:', VERSION, file=sys.stderr)
+    print('xdelta3-python:', '0.0.5', file=sys.stderr)
     print('xdelta3-c library:', file=sys.stderr)
     _xdelta3.version()

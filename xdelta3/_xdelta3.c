@@ -13,7 +13,7 @@ static PyObject * xdelta3_execute(PyObject *self, PyObject *args)
   int input_len, source_len, flags, action, result;
   size_t input_size, source_size, output_alloc, output_size;
 
-  if (!PyArg_ParseTuple(args, "y#y#ii", &input_bytes, &input_len, &source_bytes, &source_len, &flags, &action))
+  if (!PyArg_ParseTuple(args, "s#s#ii", &input_bytes, &input_len, &source_bytes, &source_len, &flags, &action))
     return NULL;
 
   source_size = (size_t)source_len;
@@ -22,20 +22,20 @@ static PyObject * xdelta3_execute(PyObject *self, PyObject *args)
   if (action == 0) {
     // if the output would be longer than the input itself, there's no point using delta encoding
     output_alloc = input_size;
-    output_buf = main_malloc(output_alloc);
+    output_buf = malloc(output_alloc);
     result = xd3_encode_memory(input_bytes, input_size, source_bytes, source_size,
         output_buf, &output_size, output_alloc, flags);
   } else {
     // output shouldn't be bigger than the original plus the delta, but give a little leeway
     output_alloc = input_size + source_size * 11 / 10;
-    output_buf = main_malloc(output_alloc);
+    output_buf = malloc(output_alloc);
     result = xd3_decode_memory(input_bytes, input_size, source_bytes, source_size,
         output_buf, &output_size, output_alloc, flags);
   }
 
   if (result == 0) {
-    PyObject *ret = Py_BuildValue("y#", output_buf, output_size);
-    main_free(output_buf);
+    PyObject *ret = Py_BuildValue("s#", output_buf, output_size);
+    free(output_buf);
     return ret;
   }
 
@@ -52,13 +52,13 @@ static PyObject * xdelta3_execute(PyObject *self, PyObject *args)
     PyErr_SetString(XDeltaError, exc_str);
 
   }
-  main_free(output_buf);
+  free(output_buf);
   return NULL;
 }
 
 static PyObject * xdelta3_version(PyObject *self, PyObject *args)
 {
-  int result = main_version();
+  int result = 3;
   PyObject *ret = Py_BuildValue("i", result);
   return ret;
 }
@@ -69,6 +69,7 @@ static PyMethodDef xdelta3_methods[] = {
   {NULL, NULL, 0, NULL}
 };
 
+#if PY_MAJOR_VERSION >= 3
 static struct PyModuleDef xdelta3_module = {
   PyModuleDef_HEAD_INIT,
   "_xdelta3",
@@ -76,13 +77,19 @@ static struct PyModuleDef xdelta3_module = {
   0,
   xdelta3_methods
 };
+#endif
 
-PyMODINIT_FUNC PyInit__xdelta3(void) {
+
+PyMODINIT_FUNC init_xdelta3(void) {
   PyObject *m;
 
+#if PY_MAJOR_VERSION >= 3
   m = PyModule_Create(&xdelta3_module);
   if (m == NULL)
     return NULL;
+#else
+  m = Py_InitModule3("_xdelta3", xdelta3_methods, "This is a xdelta3 module.");
+#endif
 
   XDeltaError = PyErr_NewException("xdelta3.XDeltaError", NULL, NULL);
   Py_INCREF(XDeltaError);
@@ -91,5 +98,9 @@ PyMODINIT_FUNC PyInit__xdelta3(void) {
   NoDeltaFound = PyErr_NewException("xdelta3.NoDeltaFound", NULL, NULL);
   Py_INCREF(NoDeltaFound);
   PyModule_AddObject(m, "NoDeltaFound", NoDeltaFound);
+#if PY_MAJOR_VERSION >= 3
   return m;
+#else
+  return;
+#endif
 }
