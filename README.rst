@@ -1,7 +1,7 @@
 xdelta3-python
 ==============
 
-This is a fork of `xdelta3-python <https://github.com/samuelcolvin/xdelta3-python` changed
+This is a fork of `xdelta3-python <https://github.com/samuelcolvin/xdelta3-python>` changed
 to work with python2.7 and Windows (at least 10).
 
 Fast delta encoding in python using xdelta 3.0.11.
